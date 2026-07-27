@@ -1,23 +1,23 @@
 {
   "services": {
     "frontend": {
-      "root": "client",
+      "root": "client/",
       "framework": "vite"
     },
     "backend": {
-      "root": "server",
+      "root": "server/",
       "framework": "express"
     }
   },
   "rewrites": [
     {
-      "source": "/api/:path*",
+      "source": "/api/(.*)",
       "destination": {
         "service": "backend"
       }
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "destination": {
         "service": "frontend"
       }

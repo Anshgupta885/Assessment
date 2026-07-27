@@ -1,0 +1,26 @@
+{
+  "services": {
+    "frontend": {
+      "root": "client",
+      "framework": "vite"
+    },
+    "backend": {
+      "root": "server",
+      "framework": "express"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/:path*",
+      "destination": {
+        "service": "frontend"
+      }
+    }
+  ]
+}

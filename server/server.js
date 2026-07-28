@@ -11,8 +11,6 @@ dotenv.config();
 
 const app = express();
 
-connectDB();
-
 app.use(express.json());
 
 app.use(
@@ -23,17 +21,27 @@ app.use(
 
 app.use(cookieParser());
 
+// Allow configured origin (or same-origin fallback).
+// withCredentials on the client requires an explicit origin, not "*".
+const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
 
-// CORS is primarily required for local development.
-// Production frontend/backend share the same Vercel domain.
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    cors({
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
-      credentials: true,
-    })
-  );
-}
+app.use(
+  cors({
+    origin: allowedOrigin,
+    credentials: true,
+  })
+);
+
+// Connect to DB on every request (serverless-safe: connection is cached in db.js)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("DB connection failed:", error.message);
+    return res.status(503).json({ message: "Database unavailable. Please try again." });
+  }
+});
 
 
 // Health check
